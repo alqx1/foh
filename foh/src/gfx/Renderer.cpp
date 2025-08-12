@@ -8,11 +8,14 @@ Renderer::Renderer()
     ibo(true, GL_ELEMENT_ARRAY_BUFFER) {
 }
 
-void Renderer::addShader(const ShaderType type, const Shader &shader) {
-    shaders.insert_or_assign(type, shader);
+void Renderer::addShader(
+    const ShaderType type, const std::string &vertShader,
+    const std::string &fragShader
+) {
+    shaders.insert_or_assign(type, std::make_unique<Shader>(vertShader, fragShader));
 }
 
-Shader Renderer::getShader(const ShaderType type) {
+std::unique_ptr<Shader>& Renderer::getShader(const ShaderType type) {
     auto it = shaders.find(type);
     if (it != shaders.end()) {
         return it->second;
@@ -32,11 +35,11 @@ void Renderer::setCameraArea(
 void Renderer::renderColorQuad(
     const glm::vec2 &size, const glm::vec4 &color, const glm::mat4 &model
 ) {
-    const Shader &shader = this->getShader(ShaderType::COLOR);
-    shader.useProgram();
+    const std::unique_ptr<Shader>& shader = this->getShader(ShaderType::COLOR);
+    shader->useProgram();
     // shader.setUniVec4f("u_color", color);
-    shader.setUniMat4("model", model);
-    shader.setUniMat4("proj", this->camera.getProj());
+    shader->setUniMat4("model", model);
+    shader->setUniMat4("proj", this->camera.getProj());
 
     vbo.buffer(
         (f32[]) {
@@ -64,11 +67,11 @@ void Renderer::renderTextureQuad(
     const struct Texture &texture, const glm::mat4 &model,
     const glm::vec2 &uv_min, const glm::vec2 &uv_max
 ) {
-    const Shader &shader = this->getShader(ShaderType::COLOR);
-    shader.useProgram();
-    shader.setUniMat4("model", model);
-    shader.setUniMat4("proj", this->camera.getProj());
-    shader.setUniTex2D("tex", texture, 0);
+    const std::unique_ptr<Shader> &shader = this->getShader(ShaderType::COLOR);
+    shader->useProgram();
+    shader->setUniMat4("model", model);
+    shader->setUniMat4("proj", this->camera.getProj());
+    shader->setUniTex2D("tex", texture, 0);
 
     const glm::vec2 size = texture.size;
     vbo.buffer(

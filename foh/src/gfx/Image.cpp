@@ -1,8 +1,5 @@
 #include "gfx/Image.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 Image::Image(const std::filesystem::path &path) {
     glGenTextures(1, &this->texture.handle);
     this->load(path);

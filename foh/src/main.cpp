@@ -1,24 +1,27 @@
 #include "gfx/Window.hpp"
 #include "gfx/ShaderFiles.hpp"
-#include "gfx/Shader.hpp"
 #include "gfx/Renderer.hpp"
 #include "gfx/Image.hpp"
 
 int main (int argc, char *argv[]) {
-    Window window("foh", 100, 100);
+    Window window("foh", 400, 400);
 
+    if (argc != 2) {
+        std::cerr << "Wrong usage!\nUsage: foh <image path>\n";
+        exit(1);
+    }
     std::filesystem::path path("seal.jpg");
     Image image(path);
-
-    Shader shader(ShaderFiles::vertShader, ShaderFiles::fragShader);
 
     glm::vec2 windowSize = window.getSize();
     Renderer renderer;
     renderer.setCameraArea(glm::vec2(0.f), windowSize);
-    renderer.addShader(COLOR, shader);
+    renderer.addShader(COLOR, ShaderFiles::vertShader, ShaderFiles::fragShader);
 
     glm::mat4 model = glm::identity<glm::mat4>();
     while (!window.shouldClose()) {
+        glm::vec2 windowSize = window.getSize();
+        renderer.setCameraArea(glm::vec2(0.f), windowSize);
         renderer.renderTextureQuad(
             image.getTexture(),
             model,

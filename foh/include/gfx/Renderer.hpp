@@ -17,8 +17,11 @@ class Renderer {
 public:
     Renderer();
 
-    void addShader(const ShaderType type, const Shader &shader);
-    Shader getShader(const ShaderType type);
+    void addShader(
+        const ShaderType type, const std::string &vertShader,
+        const std::string &fragShader
+    );
+    std::unique_ptr<Shader>& getShader(const ShaderType type);
 
     void setCameraArea(
         const glm::vec2 &bottomLeft, const glm::vec2 &topRight
@@ -34,7 +37,7 @@ public:
     );
 
 private:
-    std::unordered_map<ShaderType, Shader> shaders;
+    std::unordered_map<ShaderType, std::unique_ptr<Shader>> shaders;
     OrthoCamera camera;
     VAO vao;
     VBO vbo, ibo;

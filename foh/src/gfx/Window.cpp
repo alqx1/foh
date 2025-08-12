@@ -4,8 +4,8 @@
 
 #include "utils/utils.hpp"
 
-Window::Window(const std::string& title, s32 width, s32 height)
-: size{width, height} {
+Window::Window(const std::string &title, s32 width, s32 height)
+    : size{width, height} {
     if (!glfwInit()) {
         std::cerr << "Could not init GLFW\n";
         exit(1);
@@ -68,7 +68,7 @@ bool Window::shouldClose() {
 }
 
 void Window::resizeCallback(GLFWwindow *window, int xpos, int ypos) {
-    Window *w = (Window *)glfwGetWindowUserPointer(window);
+    Window *w = static_cast<Window *>(glfwGetWindowUserPointer(window));
     w->setSize(xpos, ypos);
     glViewport(0, 0, xpos, ypos);
 }
