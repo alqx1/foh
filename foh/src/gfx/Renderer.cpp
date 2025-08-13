@@ -26,6 +26,11 @@ std::unique_ptr<Shader>& Renderer::getShader(const ShaderType type) {
     }
 }
 
+
+OrthoCamera& Renderer::getCamera() {
+    return this->camera;
+}
+
 void Renderer::setCameraArea(
     const glm::vec2 &bottomLeft, const glm::vec2 &topRight
 ) {
@@ -67,7 +72,7 @@ void Renderer::renderTextureQuad(
     const struct Texture &texture, const glm::mat4 &model,
     const glm::vec2 &uv_min, const glm::vec2 &uv_max
 ) {
-    const std::unique_ptr<Shader> &shader = this->getShader(ShaderType::COLOR);
+    const std::unique_ptr<Shader> &shader = this->getShader(ShaderType::IMAGE);
     shader->useProgram();
     shader->setUniMat4("model", model);
     shader->setUniMat4("proj", this->camera.getProj());

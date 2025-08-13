@@ -10,12 +10,11 @@ public:
     Image(const std::filesystem::path &path);
     ~Image();
 
-    Texture getTexture();
+    Texture getTexture() const;
+    void load(const std::filesystem::path &path);
 
 private:
     Texture texture;
-
-    void load(const std::filesystem::path &path);
 };
 
 #endif

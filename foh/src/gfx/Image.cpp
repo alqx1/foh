@@ -1,5 +1,7 @@
 #include "gfx/Image.hpp"
 
+#include "stb_image.h"
+
 Image::Image(const std::filesystem::path &path) {
     glGenTextures(1, &this->texture.handle);
     this->load(path);
@@ -51,6 +53,6 @@ void Image::load(const std::filesystem::path &path) {
     }
 }
 
-Texture Image::getTexture() {
+Texture Image::getTexture() const {
     return this->texture;
 }

@@ -25,6 +25,14 @@ void OrthoCamera::setArea(
     this->update();
 }
 
+glm::vec2 OrthoCamera::getBottomLeft() const {
+    return this->bottomLeft;
+}
+
+glm::vec2 OrthoCamera::getTopRight() const {
+    return this->topRight;
+}
+
 void OrthoCamera::update() {
     this->projection = glm::ortho(
         bottomLeft.x, topRight.x, bottomLeft.y, topRight.y

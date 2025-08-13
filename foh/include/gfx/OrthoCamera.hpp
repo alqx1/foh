@@ -2,6 +2,7 @@
 #define ORTHO_CAMERA_HPP
 
 #include "glm/glm.hpp"
+#include "utils/utils.hpp"
 
 class OrthoCamera {
 public:
@@ -11,6 +12,8 @@ public:
     glm::mat4 getProj() const;
 
     void setArea(const glm::vec2 &bottomLeft, const glm::vec2 &topRight);
+    glm::vec2 getBottomLeft() const;
+    glm::vec2 getTopRight() const;
 
 private:
     glm::vec2 bottomLeft;

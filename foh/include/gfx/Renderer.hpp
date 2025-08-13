@@ -23,6 +23,7 @@ public:
     );
     std::unique_ptr<Shader>& getShader(const ShaderType type);
 
+    OrthoCamera& getCamera();
     void setCameraArea(
         const glm::vec2 &bottomLeft, const glm::vec2 &topRight
     );
