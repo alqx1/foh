@@ -10,10 +10,13 @@ public:
     OrthoCamera(const glm::vec2 &bottomLeft, const glm::vec2 &topRight);
 
     glm::mat4 getProj() const;
-
-    void setArea(const glm::vec2 &bottomLeft, const glm::vec2 &topRight);
     glm::vec2 getBottomLeft() const;
     glm::vec2 getTopRight() const;
+
+    void setArea(const glm::vec2 &bottomLeft, const glm::vec2 &topRight);
+    void moveArea(const glm::vec2 &move);
+
+    void zoom(f32 zoom);
 
 private:
     glm::vec2 bottomLeft;

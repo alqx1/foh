@@ -17,6 +17,7 @@ Window::Window(const std::string &title, s32 width, s32 height)
     glfwSetKeyCallback(this->handle, this->keyCallback);
     glfwSetCursorPosCallback(this->handle, this->cursorCallback);
     glfwSetFramebufferSizeCallback(this->handle, this->resizeCallback);
+    glfwSetScrollCallback(this->handle, this->scrollCallback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Could not init GLAD\n";
@@ -36,13 +37,20 @@ Window::Window(const std::string &title, s32 width, s32 height)
 
 Window::~Window() {
     glfwDestroyWindow(this->handle);
-    std::cout << "window\n";
 }
 
 void Window::update() {
+    this->mouse.scrolled = false;
+
     glfwPollEvents();
     glfwSwapBuffers(this->handle);
+
+    this->mouse.delta = this->mouse.position - this->mouse.previous;
+    this->mouse.previous = this->mouse.position;
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    updateButtons(keys);
+    updateButtons(mouse.buttons);
 }
 
 glm::ivec2 Window::getSize() const {
@@ -71,6 +79,18 @@ glm::vec2 Window::getMousePos() const {
     return this->mouse.position;
 }
 
+glm::vec2 Window::getMouseDelta() const {
+    return this->mouse.delta;
+}
+
+bool Window::hasScrolled() const {
+    return this->mouse.scrolled;
+}
+
+double Window::getScrollOffset() const {
+    return this->mouse.scrollOffset;
+}
+
 void Window::setKeyState(GLenum key, bool down) {
     auto it = this->keys.find(key);
     if (it == this->keys.end()) {
@@ -90,6 +110,13 @@ void Window::setMousePos(const glm::vec2 &pos) {
     this->mouse.position = pos;
 }
 
+void Window::updateButtons(std::unordered_map<GLenum, Button> &buttons) {
+    for (auto it = buttons.begin(); it != buttons.end(); it++) {
+        it->second.pressed = it->second.down && !it->second.last;
+        it->second.last = it->second.down;
+    }
+}
+
 void Window::setSize(s32 width, s32 height) {
     this->size.x = width;
     this->size.y = height;
@@ -101,11 +128,6 @@ void Window::setRenderer(Renderer *renderer) {
 
 bool Window::shouldClose() {
     return glfwWindowShouldClose(this->handle);
-}
-
-void Window::updateKeys() {
-}
-void Window::updateMouseButtons() {
 }
 
 void Window::resizeCallback(GLFWwindow *window, int xpos, int ypos) {
@@ -125,8 +147,7 @@ void Window::cursorCallback(GLFWwindow *window, double xpos, double ypos) {
     Window *w = static_cast<Window *>(
         glfwGetWindowUserPointer(window)
     );
-    glm::vec2 newPos(xpos, ypos);
-    w->mouse.delta = newPos - w->getMousePos();
+    glm::vec2 newPos(xpos, w->getSize().y - ypos);
     w->mouse.position = newPos;
 }
 
@@ -160,4 +181,14 @@ void Window::mouseButtonCallback(
         w->setMouseButtonState(button, true);
         break;
     }
+}
+
+void Window::scrollCallback(
+    GLFWwindow* window, double xoffset, double yoffset
+) {
+    Window *w = static_cast<Window *>(
+        glfwGetWindowUserPointer(window)
+    );
+    w->mouse.scrollOffset = yoffset;
+    w->mouse.scrolled = true;
 }

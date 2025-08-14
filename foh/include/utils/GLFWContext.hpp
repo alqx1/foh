@@ -20,7 +20,6 @@ public:
 
     ~GLFWContext() {
         glfwTerminate();
-        std::cout << "context\n";
     }
 };
 

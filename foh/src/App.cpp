@@ -29,13 +29,22 @@ App::App(int argc, char *argv[])
 void App::loop() {
     glm::mat4 model = glm::identity<glm::mat4>();
     while (!window.shouldClose()) {
-        renderer.renderTextureQuad(
-            image.getTexture(),
-            model,
-            glm::vec2(0.f, 0.f),
-            glm::vec2(1.f, 1.f)
-        );
+        this->update();
+        renderer.renderImage(image);
         window.update();
+    }
+}
+
+void App::update() {
+    if (window.getMouseButton(GLFW_MOUSE_BUTTON_LEFT).down) {
+        auto camera = renderer.getCamera();
+        glm::vec2 cameraArea = camera.getTopRight() - camera.getBottomLeft();
+        glm::vec2 zoom = cameraArea / glm::vec2(window.getSize());
+        renderer.moveCameraArea(-window.getMouseDelta() * zoom);
+    }
+
+    if (window.hasScrolled()) {
+        renderer.getCamera().zoom(window.getScrollOffset());
     }
 }
 

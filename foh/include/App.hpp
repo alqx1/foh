@@ -19,6 +19,8 @@ private:
 
     void loop();
 
+    void update();
+
     static void initGlfw();
 
     std::filesystem::path checkArgs(int argc, char *argv[]);

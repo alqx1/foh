@@ -37,6 +37,10 @@ void Renderer::setCameraArea(
     this->camera.setArea(bottomLeft, topRight);
 }
 
+void Renderer::moveCameraArea(const glm::vec2 &move) {
+    this->camera.moveArea(move);
+}
+
 void Renderer::renderColorQuad(
     const glm::vec2 &size, const glm::vec4 &color, const glm::mat4 &model
 ) {
@@ -106,4 +110,13 @@ void Renderer::renderTextureQuad(
     vao.bind();
     ibo.bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void *)0);
+}
+
+void Renderer::renderImage(const Image &image) {
+    this->renderTextureQuad(
+        image.getTexture(),
+        glm::identity<glm::mat4>(),
+        glm::vec2(0.f),
+        glm::vec2(1.f, 1.f)
+    );
 }

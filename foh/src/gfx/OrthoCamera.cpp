@@ -2,8 +2,10 @@
 
 #include "utils/utils.hpp"
 
+#define DEFAULT_ZOOM_MARGIN 50
+
 OrthoCamera::OrthoCamera()
-: bottomLeft(), topRight(){
+: bottomLeft(), topRight() {
     this->update();
 }
 
@@ -17,6 +19,14 @@ glm::mat4 OrthoCamera::getProj() const {
     return this->projection;
 }
 
+glm::vec2 OrthoCamera::getBottomLeft() const {
+    return this->bottomLeft;
+}
+
+glm::vec2 OrthoCamera::getTopRight() const {
+    return this->topRight;
+}
+
 void OrthoCamera::setArea(
     const glm::vec2 &bottomLeft, const glm::vec2 &topRight
 ) {
@@ -25,12 +35,23 @@ void OrthoCamera::setArea(
     this->update();
 }
 
-glm::vec2 OrthoCamera::getBottomLeft() const {
-    return this->bottomLeft;
+void OrthoCamera::moveArea(const glm::vec2 &move) {
+    this->bottomLeft += move;
+    this->topRight += move;
+    this->update();
 }
 
-glm::vec2 OrthoCamera::getTopRight() const {
-    return this->topRight;
+void OrthoCamera::zoom(f32 zoom) {
+    this->topRight -= zoom;
+    this->bottomLeft += zoom;
+
+    if (this->topRight.x < this->bottomLeft.x ||
+            this->topRight.y < this->bottomLeft.y) {
+        this->topRight += zoom;
+        this->bottomLeft -= zoom;
+    }
+
+    this->update();
 }
 
 void OrthoCamera::update() {

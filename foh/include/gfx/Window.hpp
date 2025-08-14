@@ -19,6 +19,10 @@ public:
     Button getKey(GLenum key);
     Button getMouseButton(GLenum button);
     glm::vec2 getMousePos() const;
+    glm::vec2 getMouseDelta() const;
+
+    bool hasScrolled() const;
+    double getScrollOffset() const;
 
     glm::ivec2 getSize() const;
     void setSize(s32 width, s32 height);
@@ -35,18 +39,21 @@ private:
     Renderer *renderer = nullptr;
 
     std::unordered_map<GLenum, Button> keys;
-    struct Mouse {
+    struct {
         std::unordered_map<GLenum, Button> buttons;
         glm::vec2 position;
+        glm::vec2 previous;
         glm::vec2 delta;
+
+        double scrollOffset;
+        bool scrolled;
     } mouse;
 
     void setKeyState(GLenum key, bool down);
     void setMouseButtonState(GLenum button, bool down);
     void setMousePos(const glm::vec2 &pos);
 
-    void updateKeys();
-    void updateMouseButtons();
+    static void updateButtons(std::unordered_map<GLenum, Button> &buttons);
 
     static void resizeCallback(GLFWwindow* window, int xpos, int ypos);
     static void cursorCallback(GLFWwindow* window, double xpos, double ypos);
@@ -55,6 +62,9 @@ private:
     );
     static void mouseButtonCallback(
         GLFWwindow* window, int button, int action, int mods
+    );
+    static void scrollCallback(
+        GLFWwindow* window, double xoffset, double yoffset
     );
 };
 
