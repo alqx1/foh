@@ -42,14 +42,18 @@ void OrthoCamera::moveArea(const glm::vec2 &move) {
 }
 
 void OrthoCamera::zoom(f32 zoom) {
-    this->topRight -= zoom;
-    this->bottomLeft += zoom;
+    glm::vec2 center = (bottomLeft + topRight) / 2.f;
+    glm::vec2 halfSize = (topRight - bottomLeft) / 2.f;
 
-    if (this->topRight.x < this->bottomLeft.x ||
-            this->topRight.y < this->bottomLeft.y) {
-        this->topRight += zoom;
-        this->bottomLeft -= zoom;
-    }
+    float scale = 1.f - zoom * 0.1f;
+
+    halfSize *= scale;
+
+    if (halfSize.x * 2 < 10.f || halfSize.y * 2 < 10.f) return;
+    if (halfSize.x * 2 > 10000.f || halfSize.y * 2 > 10000.f) return;
+
+    bottomLeft = center - halfSize;
+    topRight = center + halfSize;
 
     this->update();
 }

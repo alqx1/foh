@@ -132,14 +132,23 @@ bool Window::shouldClose() {
 
 void Window::resizeCallback(GLFWwindow *window, int xpos, int ypos) {
     Window *w = static_cast<Window *>(glfwGetWindowUserPointer(window));
+    glm::vec2 previous = w->getSize();
     w->setSize(xpos, ypos);
     glViewport(0, 0, xpos, ypos);
 
     if (w->renderer) {
-        const glm::vec2 bottomLeft = w->renderer->getCamera().getBottomLeft();
-        w->renderer->setCameraArea(
-            bottomLeft, bottomLeft + glm::vec2(xpos, ypos)
-        );
+        auto &camera = w->renderer->getCamera();
+        glm::vec2 center = (camera.getBottomLeft() + camera.getTopRight()) / 2.f;
+        glm::vec2 size = camera.getTopRight() - camera.getBottomLeft();
+        glm::vec2 zoom = size / glm::vec2(w->getSize());
+        glm::vec2 differenceHalf =
+            (glm::vec2(xpos, ypos) - previous) / 2.f;
+        glm::vec2 topRight = camera.getTopRight() + differenceHalf * zoom;
+        glm::vec2 bottomLeft  = camera.getBottomLeft() - differenceHalf * zoom;
+        
+        glm::vec2 temp = differenceHalf * zoom;
+        std::cout << temp.x << " " << temp.y << std::endl;
+        camera.setArea(bottomLeft, topRight);
     }
 }
 

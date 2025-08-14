@@ -18,12 +18,12 @@ public:
 
     void zoom(f32 zoom);
 
+    void update();
+
 private:
     glm::vec2 bottomLeft;
     glm::vec2 topRight;
     glm::mat4 projection;
-
-    void update();
 };
 
 #endif
