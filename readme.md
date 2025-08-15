@@ -3,6 +3,7 @@ Foh is an image viewer inspired by the well-known feh. It supports basic zooming
 
 ## Build
 Building using CMake and some other library dependencies handled with FetchContent.
+
     mkdir build
     cmake ..
     make
