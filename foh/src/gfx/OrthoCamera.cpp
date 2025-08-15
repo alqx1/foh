@@ -2,8 +2,6 @@
 
 #include "utils/utils.hpp"
 
-#define DEFAULT_ZOOM_MARGIN 50
-
 OrthoCamera::OrthoCamera()
 : bottomLeft(), topRight() {
     this->update();
@@ -41,11 +39,12 @@ void OrthoCamera::moveArea(const glm::vec2 &move) {
     this->update();
 }
 
-void OrthoCamera::zoom(f32 zoom) {
+void OrthoCamera::zoomCamera(f32 zoom) {
     glm::vec2 center = (bottomLeft + topRight) / 2.f;
     glm::vec2 halfSize = (topRight - bottomLeft) / 2.f;
 
-    float scale = 1.f - zoom * 0.1f;
+    const f32 zoomMargin = 0.1f;
+    f32 scale = 1.f - zoom * zoomMargin;
 
     halfSize *= scale;
 

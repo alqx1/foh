@@ -137,18 +137,20 @@ void Window::resizeCallback(GLFWwindow *window, int xpos, int ypos) {
     glViewport(0, 0, xpos, ypos);
 
     if (w->renderer) {
+        // voodoo
         auto &camera = w->renderer->getCamera();
-        glm::vec2 center = (camera.getBottomLeft() + camera.getTopRight()) / 2.f;
-        glm::vec2 size = camera.getTopRight() - camera.getBottomLeft();
-        glm::vec2 zoom = size / glm::vec2(w->getSize());
-        glm::vec2 differenceHalf =
-            (glm::vec2(xpos, ypos) - previous) / 2.f;
-        glm::vec2 topRight = camera.getTopRight() + differenceHalf * zoom;
-        glm::vec2 bottomLeft  = camera.getBottomLeft() - differenceHalf * zoom;
-        
-        glm::vec2 temp = differenceHalf * zoom;
-        std::cout << temp.x << " " << temp.y << std::endl;
-        camera.setArea(bottomLeft, topRight);
+        glm::vec2 newSize = glm::vec2(xpos, ypos);
+        glm::vec2 cameraSize =
+            camera.getTopRight() - camera.getBottomLeft();
+
+        glm::vec2 pixelsPerUnit = previous / cameraSize;
+        glm::vec2 newCameraSize = newSize / pixelsPerUnit;
+
+        glm::vec2 center =
+            (camera.getBottomLeft() + camera.getTopRight()) / 2.f;
+        glm::vec2 halfSize = newCameraSize / 2.f;
+
+        camera.setArea(center - halfSize, center + halfSize);
     }
 }
 

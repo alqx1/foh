@@ -44,7 +44,7 @@ void App::update() {
     }
 
     if (window.hasScrolled()) {
-        renderer.getCamera().zoom(window.getScrollOffset());
+        renderer.getCamera().zoomCamera(window.getScrollOffset());
     }
 }
 
