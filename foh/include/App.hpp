@@ -19,9 +19,7 @@ private:
 
     void loop();
 
-    void update();
-
-    static void initGlfw();
+    bool update();
 
     std::filesystem::path checkArgs(int argc, char *argv[]);
     void initCameraPositionMiddle();

@@ -30,7 +30,7 @@ public:
     void setRenderer(Renderer *renderer);
 
     bool shouldClose();
-    void update();
+    void update(bool updated);
 
 private:
     GLFWwindow *handle;

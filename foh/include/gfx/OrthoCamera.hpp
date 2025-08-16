@@ -16,7 +16,7 @@ public:
     void setArea(const glm::vec2 &bottomLeft, const glm::vec2 &topRight);
     void moveArea(const glm::vec2 &move);
 
-    void zoomCamera(f32 zoom);
+    void zoomCamera(f32 zoom, const glm::vec2 &pivot);
 
     void update();
 

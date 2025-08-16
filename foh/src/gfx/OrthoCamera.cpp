@@ -39,20 +39,25 @@ void OrthoCamera::moveArea(const glm::vec2 &move) {
     this->update();
 }
 
-void OrthoCamera::zoomCamera(f32 zoom) {
+void OrthoCamera::zoomCamera(f32 zoom, const glm::vec2 &pivot) {
     glm::vec2 center = (bottomLeft + topRight) / 2.f;
-    glm::vec2 halfSize = (topRight - bottomLeft) / 2.f;
+    glm::vec2 size = (topRight - bottomLeft);
+    glm::vec2 rightSize = topRight - pivot;
+    glm::vec2 leftSize = size - rightSize;
 
     const f32 zoomMargin = 0.1f;
     f32 scale = 1.f - zoom * zoomMargin;
 
-    halfSize *= scale;
+    leftSize *= scale;
+    rightSize *= scale;
 
-    if (halfSize.x * 2 < 10.f || halfSize.y * 2 < 10.f) return;
-    if (halfSize.x * 2 > 10000.f || halfSize.y * 2 > 10000.f) return;
+    size = leftSize + rightSize;
 
-    bottomLeft = center - halfSize;
-    topRight = center + halfSize;
+    if (size.x < 10.f || size.y < 10.f) return;
+    if (size.x > 10000.f || size.y > 10000.f) return;
+
+    bottomLeft = pivot - leftSize;
+    topRight = pivot + rightSize;
 
     this->update();
 }

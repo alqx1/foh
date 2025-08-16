@@ -1,6 +1,7 @@
 #include "App.hpp"
 
 #include "gfx/ShaderFiles.hpp"
+#include <thread>
 
 #define WINDOW_TITLE ("foh")
 #define WINDOW_WIDTH 400
@@ -27,25 +28,56 @@ App::App(int argc, char *argv[])
 }
 
 void App::loop() {
+    using namespace std::chrono;
+
     glm::mat4 model = glm::identity<glm::mat4>();
+    const duration<f64, std::milli> target = 1s / 60.f;
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    renderer.renderImage(image);
+    window.update(true);
     while (!window.shouldClose()) {
-        this->update();
-        renderer.renderImage(image);
-        window.update();
+        const auto start = high_resolution_clock::now();
+
+        if(this->update()) {
+            renderer.renderImage(image);
+            window.update(true);
+        }
+        else {
+            window.update(false);
+        }
+
+        const auto end = high_resolution_clock::now();
+
+        const duration<f64, std::milli> elapsed = end - start;
+        std::this_thread::sleep_for(target - elapsed);
     }
 }
 
-void App::update() {
+bool App::update() {
+    bool updated = false;
     if (window.getMouseButton(GLFW_MOUSE_BUTTON_LEFT).down) {
-        auto camera = renderer.getCamera();
+        auto &camera = renderer.getCamera();
         glm::vec2 cameraArea = camera.getTopRight() - camera.getBottomLeft();
         glm::vec2 zoom = cameraArea / glm::vec2(window.getSize());
         renderer.moveCameraArea(-window.getMouseDelta() * zoom);
+        updated = true;
     }
 
     if (window.hasScrolled()) {
-        renderer.getCamera().zoomCamera(window.getScrollOffset());
+        auto &camera = renderer.getCamera();
+        glm::vec2 cameraArea = camera.getTopRight() - camera.getBottomLeft();
+        glm::vec2 mousePos = window.getMousePos();
+        glm::vec2 adjustedPos =
+            camera.getBottomLeft() +
+            mousePos * (cameraArea / glm::vec2(window.getSize()));
+        renderer.getCamera().zoomCamera(
+            window.getScrollOffset(),
+            adjustedPos
+        );
+        updated = true;
     }
+
+    return updated;
 }
 
 std::filesystem::path App::checkArgs(int argc, char *argv[]) {

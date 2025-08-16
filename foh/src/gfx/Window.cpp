@@ -32,23 +32,26 @@ Window::Window(const std::string &title, s32 width, s32 height)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glfwSetWindowUserPointer(this->handle, this);
-    this->update();
+    this->update(true);
 }
 
 Window::~Window() {
     glfwDestroyWindow(this->handle);
 }
 
-void Window::update() {
+void Window::update(bool updated) {
     this->mouse.scrolled = false;
 
     glfwPollEvents();
-    glfwSwapBuffers(this->handle);
+
+    if (updated) {
+        glfwSwapBuffers(this->handle);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
     this->mouse.delta = this->mouse.position - this->mouse.previous;
     this->mouse.previous = this->mouse.position;
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     updateButtons(keys);
     updateButtons(mouse.buttons);
 }
